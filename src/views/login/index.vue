@@ -8,21 +8,21 @@
           <img src='../../assets/img/logo_index.png' alt="">
       </div>
       <!-- 表单 -->
-      <el-form style="margin-top:20px">
-          <!-- 表单容器 -->
-          <el-form-item>
-              <!-- 表单域 -->
-              <el-input placeholder="请输入手机号"></el-input>
+      <el-form :model="loginFrom" :rules="rules" ref="ruleForm" style="margin-top:20px">
+          <!-- 表单容器 表示要绑定的字段名 -->
+          <el-form-item prop="phone">
+              <!-- 表单域  v-model双向绑定-->
+              <el-input v-model="loginFrom.phone" placeholder="请输入手机号"  clearable></el-input>
           </el-form-item>
           <!-- 验证码 -->
-          <el-form-item>
-              <el-input style="width:60%" placeholder="请输入验证码"></el-input>
+          <el-form-item prop='yzm'>
+              <el-input v-model="loginFrom.yzm" style="width:60%" placeholder="请输入验证码" clearable></el-input>
              <!-- 放置一个按钮 -->
              <el-button style="float:right">发送验证码</el-button>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="checked">
               <!-- 是否同意 -->
-              <el-checkbox>我阅读同意用户协议和隐私条款</el-checkbox>
+              <el-checkbox v-model="loginFrom.checked">我阅读同意用户协议和隐私条款</el-checkbox>
           </el-form-item>
           <!-- 按钮 -->
           <el-form-item>
@@ -34,7 +34,44 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      // 登录表单的数据
+      loginFrom: {
+        phone: '', // 手机号
+        yzm: '', // 验证码
+        checked: false// 是否同意用户协议
+      },
+      // 定义一个表单验证规则
+      rules: {
+        // 手机号验证规则
+        // required: true表示必字段必填
+        phone: [{ required: true, message: '手机号码不能为空' }, {
+          pattern: /^1[3-9]\d{9}$/,
+          message: '你的手机号格式不正确'
+        }],
+        // 验证码验证规则
+        yzm: [{ required: true, message: '验证码不能为空' }, {
+          pattern: /^\d{6}$/,
+          message: '验证码应该是6位数字'
+        }],
+        // 是否勾选规则
+        checked: [{
+          validator: function (rule, value, callback) {
+          // rule是当前的校验规则
+          // value是当前的要校验的字段的值
+          // calllback是一个回调函数 不论成功或者失败都要执行
+          // 成功执行callback 失败执行 callback(new Error('错误信息'))
+          // 我们认为 如果 value 为true 就表示 校验成功 如果value 为false就表示校验失败
+            // new Error(错误信息) 就是我们提示的错误信息
+            value ? callback() : callback(new Error('请先勾选同意条款'))
+          }
+        }]
+      }
+    }
+  }
+}
 </script>
 
 <style lang='less' scoped>
