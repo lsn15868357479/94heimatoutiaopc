@@ -7,22 +7,22 @@
       <div class="title">
           <img src='../../assets/img/logo_index.png' alt="">
       </div>
-      <!-- 表单 -->
-      <el-form :model="loginFrom" :rules="rules" ref="ruleForm" style="margin-top:20px">
-          <!-- 表单容器 表示要绑定的字段名 -->
-          <el-form-item prop="phone">
+      <!-- 表单 绑定model属性  绑定rules属性(表单验证规则) ref 给el-form一个属性-->
+      <el-form :model="loginForm" :rules="rules" ref="loginForm" style="margin-top:20px">
+          <!-- 表单容器 设置prop属性 prop表示要绑定的字段名 -->
+          <el-form-item prop="mobile">
               <!-- 表单域  v-model双向绑定-->
-              <el-input v-model="loginFrom.phone" placeholder="请输入手机号"  clearable></el-input>
+              <el-input v-model="loginForm.mobile" placeholder="请输入手机号"  clearable></el-input>
           </el-form-item>
           <!-- 验证码 -->
-          <el-form-item prop='yzm'>
-              <el-input v-model="loginFrom.yzm" style="width:60%" placeholder="请输入验证码" clearable></el-input>
+          <el-form-item prop='code'>
+              <el-input v-model="loginForm.code" style="width:60%" placeholder="请输入验证码" clearable></el-input>
              <!-- 放置一个按钮 -->
-             <el-button style="float:right">发送验证码</el-button>
+             <el-button style="float:right" plain>发送验证码</el-button>
           </el-form-item>
           <el-form-item prop="checked">
               <!-- 是否同意 -->
-              <el-checkbox v-model="loginFrom.checked">我阅读同意用户协议和隐私条款</el-checkbox>
+              <el-checkbox v-model="loginForm.checked">我阅读同意用户协议和隐私条款</el-checkbox>
           </el-form-item>
           <!-- 按钮 -->
           <el-form-item>
@@ -38,21 +38,21 @@ export default {
   data () {
     return {
       // 登录表单的数据
-      loginFrom: {
-        phone: '', // 手机号
-        yzm: '', // 验证码
+      loginForm: {
+        mobile: '', // 手机号
+        code: '', // 验证码
         checked: false// 是否同意用户协议
       },
       // 定义一个表单验证规则
       rules: {
         // 手机号验证规则
         // required: true表示必字段必填
-        phone: [{ required: true, message: '手机号码不能为空' }, {
+        mobile: [{ required: true, message: '手机号码不能为空' }, {
           pattern: /^1[3-9]\d{9}$/,
           message: '你的手机号格式不正确'
         }],
         // 验证码验证规则
-        yzm: [{ required: true, message: '验证码不能为空' }, {
+        code: [{ required: true, message: '验证码不能为空' }, {
           pattern: /^\d{6}$/,
           message: '验证码应该是6位数字'
         }],
@@ -73,9 +73,9 @@ export default {
   },
   methods: {
     login () {
-      //    this.$refs.ruleForm 获取的就是el-form的对象实例
+      //    this.$refs.loginForm 获取的就是el-form的对象实例
       // 第一种 回调函数 isOK, fields(没有校验通过的字段)
-      // this.$refs.ruleForm.validate(function (isOK) {
+      // this.$refs.loginForm.validate(function (isOK) {
       //   if (isOK) {
       //     console.log('校验通过')
       //   } else {
@@ -83,9 +83,20 @@ export default {
       //   }
       // }) // 方法
       // 第二种方式 promise
-      this.$refs.ruleForm.validate().then(() => {
+      this.$refs.loginForm.validate().then(() => {
         // 如果成功通过 校验就会到达 then
+        // 通过校验之后 应该做什么事 -> 应该调用登录接口 看看手机号是否正常
+        //   this.$axios.get/post/delete/put
+        this.$axios({
+          url: '/authorizations', // 请求地址
+          // params: '', // 地址参数 get参数
+          data: 'this.loginForm', // bady请求体参数
+          method: 'post' // 请求类型 post/get/delete/put
+        }).then(result => {
+          console.log(result.data)
+        }).catch(() => {
 
+        })
       })
     }
   }
