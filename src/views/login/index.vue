@@ -26,7 +26,7 @@
           </el-form-item>
           <!-- 按钮 -->
           <el-form-item>
-              <el-button style="width:100%" type="primary">登录</el-button>
+              <el-button @click="login" style="width:100%" type="primary">登录</el-button>
           </el-form-item>
       </el-form>
     </el-card>
@@ -69,6 +69,24 @@ export default {
           }
         }]
       }
+    }
+  },
+  methods: {
+    login () {
+      //    this.$refs.ruleForm 获取的就是el-form的对象实例
+      // 第一种 回调函数 isOK, fields(没有校验通过的字段)
+      // this.$refs.ruleForm.validate(function (isOK) {
+      //   if (isOK) {
+      //     console.log('校验通过')
+      //   } else {
+      //     console.log('校验未通过')
+      //   }
+      // }) // 方法
+      // 第二种方式 promise
+      this.$refs.ruleForm.validate().then(() => {
+        // 如果成功通过 校验就会到达 then
+
+      })
     }
   }
 }
