@@ -88,14 +88,20 @@ export default {
         // 通过校验之后 应该做什么事 -> 应该调用登录接口 看看手机号是否正常
         //   this.$axios.get/post/delete/put
         this.$axios({
-          url: '/authorizations', // 请求地址
-          // params: '', // 地址参数 get参数
-          data: 'this.loginForm', // bady请求体参数
-          method: 'post' // 请求类型 post/get/delete/put
+          url: '/authorizations',
+          method: 'post',
+          data: this.loginForm
         }).then(result => {
-          console.log(result.data)
+          console.log(result.data.data.token)
+          // 放到前端的缓存中
+          window.localStorage.setItem('user-token', result.data.data.token)
+          // 编程式导航
+          this.$router.push('/home') // 登录成功 跳转到home页
         }).catch(() => {
-
+          this.$message({
+            message: '手机号或者验证码错误',
+            type: 'warning'
+          })
         })
       })
     }
