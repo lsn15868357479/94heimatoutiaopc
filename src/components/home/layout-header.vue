@@ -11,7 +11,7 @@
     <el-col class='right' :span="12">
         <!-- 再次放置一个row组件-->
         <el-row type='flex' justify="end" align="middle">
-          <img src="../../assets/img/avatar.jpg" alt="">
+          <img src="../../assets/img/0e0a60f3ceb503c4d5d621ac029735ca.jpg" alt="">
            <!-- 下拉菜单 -->
            <el-dropdown trigger='click'>
                <!-- 显示的内容 -->
