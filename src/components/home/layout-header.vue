@@ -12,10 +12,12 @@
         <!-- 再次放置一个row组件-->
         <el-row type='flex' justify="end" align="middle">
           <img src="../../assets/img/0e0a60f3ceb503c4d5d621ac029735ca.jpg" alt="">
+           <!-- <img :src="userInfo.photo" alt=""> -->
            <!-- 下拉菜单 -->
            <el-dropdown trigger='click'>
                <!-- 显示的内容 -->
                <span>大魔王</span>
+                <span>{{ userInfo.name }}</span>
                 <!-- 下拉内容需要做具名插槽dropdown  el-dropdown-menu是专门做下拉的组件 -->
                 <el-dropdown-menu slot="dropdown" >
                    <!-- 下拉选项 el-dropdown-item 作为下拉选项组件-->
@@ -32,7 +34,24 @@
 
 <script>
 export default {
-
+  data () {
+    return {
+      userInfo: {} // 用户个人信息
+    }
+  },
+  created () {
+    const token = localStorage.getItem('user-token')// 从缓存中取出 token
+    // 获取用户的个人信息
+    this.$axios({
+      url: '/user/profile', // 请求地址
+      headers: {
+        Authorization: `Bearer ${token}`// 格式要求 Bearer +token
+      }// 请求头参数
+    }).then(result => {
+      // 如果加载成功了 我们要将数据赋值给 userInfo
+      this.userInfo = result.data.data
+    })
+  }
 }
 </script>
 
