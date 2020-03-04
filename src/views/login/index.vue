@@ -92,8 +92,9 @@ export default {
           method: 'post',
           data: this.loginForm
         }).then(result => {
-          console.log(result.data.data.token)
+          // console.log(result.data.data.token)
           // 放到前端的缓存中
+          //  window.localStorage.setItem('user-token', result.data.data.token)
           window.localStorage.setItem('user-token', result.data.token)
           // 编程式导航
           this.$router.push('/home') // 登录成功 跳转到home页
