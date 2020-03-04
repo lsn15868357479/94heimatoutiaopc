@@ -1,5 +1,7 @@
 <template>
-<el-breadcrumb>
+<!-- 使用elementUI的 面包屑  -->
+<el-breadcrumb separator=">">
+    <!-- el-breadcrumb-item 相当于 router-link标签 -->
     <el-breadcrumb-item to="/home">首页</el-breadcrumb-item>
     <!-- 第二是动态的选项 -->
     <el-breadcrumb-item>
