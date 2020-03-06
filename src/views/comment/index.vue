@@ -25,6 +25,18 @@
         </template>
        </el-table-column>
 </el-table>
+ <!-- 放置分页插件 -->
+<el-row style="height:80px" type="flex" align="middle" justify="center">
+ <!-- 需要动态属性 -->
+
+  <el-pagination background layout="prev,pager,next"
+  :current-page="page.currentPage "
+  :page-size="page.pageSize"
+  :total="page.total"
+  @current-change="changePage"
+  ></el-pagination>
+</el-row>
+
 </el-card>
 </template>
 
@@ -32,16 +44,30 @@
 export default {
   data () {
     return {
+      page: {
+        total: 0, // 默认总数是0
+        currentPage: 2, // 默认的页码
+        pageSize: 10// 每页多少条
+      },
       list: []
     }
   },
   methods: {
+    // 页码改变事件
+    changePage (newPage) {
+      this.page.currentPage = newPage// 赋值最新页码
+      // 重新拉取数据
+      this.getComment()// 获取评论
+    },
     //   获取评论数据
     getComment () {
       this.$axios({
         url: '/articles', // 请求地址
+        // 接口不传分页数据 默认传第一页数据
         params: {
-          response_type: 'comment' // 此参数用来控制获取数据类型
+          response_type: 'comment', // 此参数用来控制获取数据类型
+          page: this.page.currentPage,
+          per_page: this.page.pageSize
         }
         // query参数应该在哪个位置传 axios
         // params 传get参数也就是query参数
@@ -49,6 +75,8 @@ export default {
       }).then(result => {
         //  将返回结果的中 数组 给list
         this.list = result.data.results
+        // 在获取玩数据之后 讲总数赋值给total
+        this.page.total = result.data.total_count
       })
     },
     //  定义一个格式化的函数
