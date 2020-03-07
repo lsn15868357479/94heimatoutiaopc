@@ -9,13 +9,13 @@
             </template>
         </bread-crumb>
         <!-- 放置一个上传的组件 -->
-        <!-- <el-row type='flex' justify="end"> -->
+        <el-row type='flex' justify="end">
           <!-- 上传组件要求必须传action属性 不传就会报错 可以给一个空字符串 show-file-list 是否显示已上传文件列表-->
-          <!-- <el-upload :show-file-list="false" :http-request="uploadImg" action=""> -->
-           <!-- <el-button size="small" type='primary'>上传素材</el-button> -->
+          <el-upload :show-file-list="false" :http-request="uploadImg" action="">
+           <el-button size="small" type='primary'>上传素材</el-button>
            <!-- 传入一个内容 点击内容就会传出上传文件框 -->
-          <!-- </el-upload> -->
-        <!-- </el-row> -->
+          </el-upload>
+        </el-row>
 
         <!-- {{activeName}} -->
         <!-- 放置标签页 -->
@@ -81,6 +81,23 @@ export default {
     }
   },
   methods: {
+    // 定义一个上传组件的方法
+    uploadImg (params) {
+      // params.file就是需要上传的图片文件
+      // 接口测试类型要求是formData
+      const data = new FormData()// 实例化一个formData对象
+      data.append('image', params.file)// 加入文件
+      this.$axios({
+        url: '/user/images', // 请求地址
+        method: 'post',
+        data
+      }).then(() => {
+        // 如果成功了 应该重新获取数据
+        this.getMaterial()
+      }).catch(() => {
+        this.$message.error('上传失败')
+      })
+    },
     // 该方法汇总页码切换时执行
     changePage (newPage) {
       this.page.currentPage = newPage // 将新页码赋值给也吗数据
