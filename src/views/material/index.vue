@@ -31,8 +31,8 @@
                         <img :src="item.url" alt="">
                         <!-- 操作栏 可以flex布局-->
                         <el-row class='operate' type='flex' align="middle" justify="space-around">
-                           <i class='el-icon-star-on'></i>
-                           <i class='el-icon-delete-solid'></i>
+                           <i class='el-icon-star-on' @click="collectOrCancel(item)" :style="{color: item.is_collected ? 'red' : 'black'}"></i>
+                           <i class='el-icon-delete-solid' @click="delMaterial(item)"></i>
                         </el-row>
                     </el-card>
                 </div>
@@ -76,11 +76,43 @@ export default {
       page: {
         currentPage: 1, // 默认第一页
         total: 0, // 当前总数
-        pageSize: 4 // 每页多少条
+        pageSize: 2 // 每页多少条
       }// 专门的对象存放分页信息
     }
   },
   methods: {
+    // 删除素材的方法
+    delMaterial (row) {
+      // 删除之前询问一下
+      // confirm也是promise
+      this.$confirm('确定要删除当前图片吗', '提示').then(() => {
+        this.$axios({
+          method: 'delete', // 请求类型
+          url: `/user/images/${row.id}` // 请求地址
+        }).then(() => {
+        // 成功了之后
+          this.getMaterial()// 重新加载数据
+        }).catch(() => {
+          this.$message.error('删除失败')
+        })
+      })
+    },
+    // 取消或者收藏素材
+    collectOrCancel (row) {
+      //  调用收藏或取消接口
+      this.$axios({
+        method: 'put', // 请求类型
+        url: `/user/images/${row.id}`, // 请求地址
+        data: {
+          collect: !row.is_collected // true  or false  ?  取反 因为 收藏 => 取消收藏 没收藏  => 收藏
+        }// 放置body参数
+      }).then(() => {
+        // 成功了之后
+        this.getMaterial()// 重新加载数据
+      }).catch(() => {
+        this.$message.error('收藏失败')
+      })
+    },
     // 定义一个上传组件的方法
     uploadImg (params) {
       // params.file就是需要上传的图片文件
