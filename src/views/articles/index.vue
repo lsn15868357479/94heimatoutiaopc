@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card class="articles">
       <bread-crumb>
          <template slot="title">文章列表</template>
      </bread-crumb>
@@ -33,6 +33,34 @@
               </el-date-picker>
          </el-form-item>
      </el-form>
+     <!-- 文章的主体结构 flex布局-->
+     <el-row class='total' type='flex' align="middle">
+            <span>共找到1000条符合条件的内容</span>
+     </el-row>
+     <!-- 列表内容 -->
+     <div class="article-item" v-for="item in 100" :key="item">
+         <!-- 左侧内容 -->
+         <div class="left">
+             <img src="http://img3.imgtn.bdimg.com/it/u=1152899291,1406946364&fm=26&gp=0.jpg" alt="">
+             <div class="info">
+                 <span>111</span>
+                 <el-tag class="tag">已发表</el-tag>
+                 <span>222</span>
+                 <span class="data">2020-02-18 10:12:19</span>
+             </div>
+         </div>
+         <!-- 右侧内容 -->
+         <div class="right">
+             <span>
+                 修改
+                 <i  class="el-icon-edit"></i>
+             </span>
+             <span>
+                 删除
+                 <i class="el-icon-delete"></i>
+             </span>
+         </div>
+     </div>
   </el-card>
 </template>
 
@@ -69,6 +97,49 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+ .articles {
+      .total {
+        height: 60px;
+        border-bottom: 1px dashed #ccc;
+      }
+      // 对文章循环项进行样式的编写
+       .article-item {
+         display: flex;
+         justify-content: space-between;
+         padding: 20px  0;
+         border-bottom: 1px solid #ccc;
+       .left {
+           display: flex;
+           img {
+             width:180px;
+             height: 100px;
+             border-radius: 4px;
+               }
+               .info {
+             display: flex;
+             flex-direction: column;
+             height: 100px;
+             justify-content: space-around;
+             margin-left: 10px;
+              .date {
+               color: #999;
+               font-size:12px;
+             }
+              .tag {
+               width: 60px;
+               text-align: center;
+              }
+          }
+       }
+       .right {
+           span {
+             font-size: 12px;
+             margin-right: 8px;
+             cursor: pointer;
+             user-select: none;
+           }
+         }
+    }
+ }
 </style>
