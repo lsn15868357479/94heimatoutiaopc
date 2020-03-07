@@ -8,27 +8,38 @@
                 素材管理
             </template>
         </bread-crumb>
+        <!-- 放置一个上传的组件 -->
+        <!-- <el-row type='flex' justify="end"> -->
+          <!-- 上传组件要求必须传action属性 不传就会报错 可以给一个空字符串 show-file-list 是否显示已上传文件列表-->
+          <!-- <el-upload :show-file-list="false" :http-request="uploadImg" action=""> -->
+           <!-- <el-button size="small" type='primary'>上传素材</el-button> -->
+           <!-- 传入一个内容 点击内容就会传出上传文件框 -->
+          <!-- </el-upload> -->
+        <!-- </el-row> -->
+
         <!-- {{activeName}} -->
         <!-- 放置标签页 -->
           <!-- 放置标签页 v-model所绑定的值 就是当前所激活的页签 切换tabs页签的时候 需要 进行事件的监听-->
         <el-tabs v-model="activeName" @tab-click="changeTab">
               <!-- 放置标签 label表示标签显示的名称 name代表页签的选中的值-->
-            <el-tab-pane label="全部素材" name="all">
-               <div class="img-list">
-                 <el-card class="img-card" v-for="item in list" :key="item.id">
-                   <!-- 放置图片 并且赋值图片地址-->
-                   <img :src="item.url" alt="">
-                   <!-- 操作栏 -->
-                   <el-row class='operate' type='flex' align="middle" justify="space-around">
+                 <el-tab-pane label="全部素材" name='all'>
+                <!-- 内容 循环生成页面结构 -->
+                <div class='img-list'>
+                    <!-- 采用v-for对list数据进行循环 -->
+                    <el-card class='img-card' v-for="item in list" :key="item.id">
+                        <!-- 放置图片 并且赋值 图片地址-->
+                        <img :src="item.url" alt="">
+                        <!-- 操作栏 可以flex布局-->
+                        <el-row class='operate' type='flex' align="middle" justify="space-around">
                            <i class='el-icon-star-on'></i>
                            <i class='el-icon-delete-solid'></i>
-                   </el-row>
-                 </el-card>
-               </div>
+                        </el-row>
+                    </el-card>
+                </div>
             </el-tab-pane>
-
-            <el-tab-pane label="收藏素材" name="collect">
-                <div class='img-list'>
+            <el-tab-pane label="收藏素材" name='collect'>
+                <!-- 内容 -->
+                  <div class='img-list'>
                     <!-- 采用v-for对list数据进行循环 -->
                     <el-card class='img-card' v-for="item in list" :key="item.id">
                         <!-- 放置图片 并且赋值 图片地址-->
@@ -37,7 +48,23 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-   </el-card>
+        <!-- 放置一个公共的分页组件 -->
+        <el-row type="flex" justify="center" style="height:80px" align="middle">
+                  <!-- 放置分页组件
+              total  总条数
+              current-page 当前页码
+              page-size 每页多少条
+              监听 分页的组件的切换事件
+            -->
+                <el-pagination background
+                :total="page.total"
+                :current-page="page.currentPage"
+                :page-size="page.pageSize"
+                layout="prev,pager,next"
+                @current-change="changePage"
+                ></el-pagination>
+        </el-row>
+     </el-card>
 </template>
 
 <script>
@@ -45,61 +72,78 @@ export default {
   data () {
     return {
       activeName: 'all', // 当前激活的标签
-      list: []// 接收全部素材
+      list: [], // 接收全部素材
+      page: {
+        currentPage: 1, // 默认第一页
+        total: 0, // 当前总数
+        pageSize: 4 // 每页多少条
+      }// 专门的对象存放分页信息
     }
   },
   methods: {
-    // 获取素材数据
+    // 该方法汇总页码切换时执行
+    changePage (newPage) {
+      this.page.currentPage = newPage // 将新页码赋值给也吗数据
+      this.getMaterial()// 读取数据
+    },
+    //   获取素材数据
     getMaterial () {
       this.$axios({
         url: '/user/images', // 请求地址
         params: {
-          collect: this.activeName === 'collect' //  这个位置应该变活 根据当前的页签变活   activeName === 'all' 获取所有的素材  activeName = 'collect' 获取收藏素材数据
-        }, // het参数就是query参数
-        data: {} // data参数 放的是bodycs
+          collect: this.activeName === 'collect', //  这个位置应该变活 根据当前的页签变活   activeName === 'all' 获取所有的素材  activeName = 'collect' 获取收藏素材
+          page: this.page.currentPage, // 取页码变量中的值 因为只要页码变量一变 获取的数据跟着变
+          per_page: this.page.pageSize // 获取每页数量
+        }, // get参数 也就是query参数
+        data: {} // data参数 放的是body参数
       }).then(result => {
-        // 讲返回的数据 赋值到data中的数据
+        // 将返回的数据 赋值到data中的数据
         this.list = result.data.results
+        // 将总条数赋值给total
+        this.page.total = result.data.total_count// 总数 全部素材的总数 收藏素材的总数
       })
     },
     // 切换页签事件
     changeTab () {
+      this.page.currentPage = 1// 将页码重置为第一页 因为分类变了 数据变了
       // 在切换事件中
-    // 可以根据当前 activeName来决定是获取哪个方面 的数据
-    // activeName === 'all' 获取所有的素材  activeName = 'collect' 获取收藏素材
+      // 可以根据当前 activeName来决定是获取哪个方面 的数据
+      // activeName === 'all' 获取所有的素材  activeName = 'collect' 获取收藏素材
       this.getMaterial() // 直接调用获取素材的方法
     }
   },
   created () {
     // 实例化之后 调用获取素材数据
+    this.getMaterial() // 获取素材数据
   }
 }
 </script>
 
-<style lang="less" scoped>
-.img-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  .img-card {
-    width: 220px;
-    height: 240px;
-    margin: 20px 30px;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-    .operate {
-       position: absolute;
-       left:0;
-       bottom:0;
-       width: 100%;
-       background: #f4f5f6;
-       height: 30px;
-       i  {
-            font-size:20px;
-         }
-    }
+<style lang='less' scoped>
+  .img-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      .img-card {
+          width: 220px;
+          height: 240px;
+          margin: 20px 40px;
+          position: relative;
+          img {
+              width: 100%;
+              height: 100%;
+          }
+          .operate {
+              position: absolute;
+              left:0;
+              bottom:0;
+              width: 100%;
+              background: #f4f5f6;
+              height: 30px;
+              i  {
+                  font-size:20px;
+              }
+          }
+      }
   }
-}
 </style>
