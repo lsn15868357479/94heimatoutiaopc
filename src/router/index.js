@@ -29,6 +29,9 @@ const routes = [
     }, {
       path: 'articles',
       component: () => import('@/views/articles') // 简写
+    }, {
+      path: 'publish',
+      component: () => import('@/views/publish') // 简写
     }
     ]// 在一级路由的路由表下 children 配置二级路由表
   },
