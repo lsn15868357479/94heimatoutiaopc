@@ -38,22 +38,22 @@
             <span>共找到1000条符合条件的内容</span>
      </el-row>
      <!-- 列表内容 -->
-     <div class="article-item" v-for="item in 100" :key="item">
+     <div class="article-item" v-for="item in list" :key="item.id.toString()">
          <!-- 左侧内容 -->
          <div class="left">
-             <img src="http://img3.imgtn.bdimg.com/it/u=1152899291,1406946364&fm=26&gp=0.jpg" alt="">
+          <!-- 设置文章的封面信息 有的数组有值 有的没值 搞一个默认值 -->
+                <img :src=" item.cover.images.length ?  item.cover.images[0] : defaultImg" alt="">
              <div class="info">
-                 <span>111</span>
-                 <el-tag class="tag">已发表</el-tag>
-                 <span>222</span>
-                 <span class="data">2020-02-18 10:12:19</span>
+                 <span>{{item.title}}</span>
+                 <el-tag :type="item.status | filterType" class="tag">{{item.status | filterStatus}}</el-tag>
+                 <span class="date">{{item.pubdate}}</span>
              </div>
          </div>
          <!-- 右侧内容 -->
          <div class="right">
              <span>
                  修改
-                 <i  class="el-icon-edit"></i>
+                 <i class="el-icon-edit"></i>
              </span>
              <span>
                  删除
@@ -76,7 +76,39 @@ export default {
         channel_id: null, // 表示没有任何的频
         datePange: []// 日期范围
       },
-      channels: []// 专门来接收频道的数据
+      channels: [], // 专门来接收频道的数据
+      list: [], // 定义list数据接收文章列表
+      defaultImg: require('../../assets/img/0e0a60f3ceb503c4d5d621ac029735ca.jpg')// 地址对应的文件变成了变量 在编译的时候会被拷贝到对应位置
+    }
+  },
+  // // 过滤器的第一个参数是value
+  // 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败
+  filters: {
+    filterStatus (value) {
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 1:
+          return '待审核'
+        case 2 :
+          return '已发表'
+        case 3:
+          return '审核失败'
+      }
+    },
+    // 过滤器除了用在 插值表达中还可以用 v-bind 的表达式中
+    filterType (value) {
+      // 根据当前状态的值 显示不同类型的tag标签
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 1:
+          return 'info'
+        case 2 :
+          return ''// 已发表
+        case 3:
+          return 'danger'// 审核失败
+      }
     }
   },
   methods: {
@@ -88,11 +120,20 @@ export default {
         // 获取频道接口返回的数据
         this.channels = result.data.channels
       })
+    },
+    // 获取文章列表
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(result => {
+        this.list = result.data.results // 获取文章列表
+      })
     }
   },
   created () {
     // 获取频道数据
     this.getChannels()
+    this.getArticles()
   }
 }
 </script>
