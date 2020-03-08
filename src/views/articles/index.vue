@@ -56,8 +56,9 @@
          </div>
          <!-- 右侧内容 -->
          <div class="right">
-             <span>修改<i class="el-icon-edit"></i> </span>
-             <span>删除<i class="el-icon-delete"></i> </span>
+             <span>修改<i class="el-icon-edit"></i></span>
+             <!-- 需要传递参数 传递要删除的id -->
+             <span @click="delMaterial(item.id.toString())">删除<i class="el-icon-delete"></i></span>
          </div>
      </div>
         <!-- 放置分页组件 -->
@@ -98,14 +99,16 @@ export default {
     }
   },
 
-  // 监听data中的数据变化  第二种解决方案  watch监听对象的深度检测方案tch: {
-  searchForm: {
-    deep: true, // 固定写法 表示 会深度检测searchForm中的数据变化
-    // handler也是一个固定写法 一旦数据发生任何变化 就会触发 更新
-    handler () {
-      this.page.currentPage = 1 // 只要条件变化 就变成第一页
-      //  统一调用改变条件的 方法
-      this.changeCondition() // this 指向当前组件实例
+  // 监听data中的数据变化  第二种解决方案  watch监听对象的深度检测方案
+  watch: {
+    searchForm: {
+      deep: true, // 固定写法 表示 会深度检测searchForm中的数据变化
+      // handler也是一个固定写法 一旦数据发生任何变化 就会触发 更新
+      handler () {
+        //  统一调用改变条件的 方法
+        this.page.currentPage = 1 // 只要条件变化 就变成第一页
+        this.changeCondition() // this 指向当前组件实例
+      }
     }
   },
   // // 过滤器的第一个参数是value
@@ -139,6 +142,25 @@ export default {
     }
   },
   methods: {
+    // 删除素材方法
+    delMaterial (id) {
+    //  先友好的提示一下
+      this.$confirm('您确定删除此条数据?', '提示').then(() => {
+        // 如果进入了then 表示点击了确定
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id}` // 地址 是  /articles/:target target 是文章id
+        }).then(() => {
+          // 如果删除成功了
+          // 重新获取数据
+        //  this.getArticles() // 如果这么写 就意味着你 舍去了当前的页码和条件 不能这么写
+          // 应该带着条件和页码去加载
+          this.changeCondition() // 重新加载
+        }).catch(() => {
+          this.$message.error('删除文章失败')
+        })
+      })
+    },
     // 改变页码
     changePage (newPage) {
       // 先将最新的页码给到当前页码
