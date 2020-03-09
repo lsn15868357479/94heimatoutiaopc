@@ -30,7 +30,7 @@ const routes = [
       path: 'articles',
       component: () => import('@/views/articles') // 简写
     }, {
-      path: 'publish',
+      path: 'publish/:articles?', // 发布文章 加上问号表示 可有可无
       component: () => import('@/views/publish') // 简写
     }
     ]// 在一级路由的路由表下 children 配置二级路由表
