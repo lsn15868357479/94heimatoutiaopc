@@ -59,7 +59,7 @@
               <!-- 事件绑定方法 -->
               <!-- <span @click="toPublish">修改<i class="el-icon-edit"></i></span> -->
               <!-- 事件直接跟逻辑 -->
-              <span @click="$router.push(`/home/publish/${item.id.toString()}`)">修改<i class="el-icon-edit"></i></span>
+                <span @click="$router.push(`/home/publish/${item.id.toString()}`)"><i class="el-icon-edit"></i> 修改</span>
              <!-- 需要传递参数 传递要删除的id -->
              <span @click="delMaterial(item.id.toString())">删除<i class="el-icon-delete"></i></span>
          </div>
