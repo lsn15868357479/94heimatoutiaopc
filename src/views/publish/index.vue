@@ -9,11 +9,14 @@
                 <!-- 输入框 -->
                 <el-input v-model="publishForm.title" placeholder="请输入您的标题" style="width:60%"></el-input>
             </el-form-item>
+                <!-- 将el-input换成 quill-editor即可 -->
             <el-form-item label="内容" prop="content">
                 <!-- 多行输入 -->
-                <el-input v-model="publishForm.content" placeholder="请输入您的内容" type='textarea' :rows="4"></el-input>
+                <!-- <el-input v-model="publishForm.content" placeholder="请输入您的内容" type='textarea' :rows="4"></el-input> -->
+                 <quill-editor v-model="publishForm.content" style="height:300px">
+                 </quill-editor>
             </el-form-item>
-            <el-form-item label="封面" prop="cover">
+            <el-form-item label="封面" prop="cover" style="margin-top:120px;">
                  <!-- 单选框组 -->
               <el-radio-group v-model="publishForm.cover.type">
                  <!-- 需要给每个el-radio 加上 label属性 -->
