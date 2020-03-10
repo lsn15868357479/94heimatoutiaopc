@@ -21,7 +21,13 @@
                ></el-pagination>
           </el-row>
       </el-tab-pane>
-      <el-tab-pane label="上传素材" name="upload">上传素材</el-tab-pane>
+      <el-tab-pane label="上传素材" name="upload" >
+          <!-- 放置一个上传组件 -->
+          <el-upload action="" class="upload-img" :http-request="uploadImg">
+              <!-- 放置一个元素用来点击上传 -->
+              <i class="el-icon-plus"></i>
+          </el-upload>
+      </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -30,6 +36,7 @@ export default {
   data () {
     return {
       activeName: 'material', // 当前激活的变量
+      list: [],
       page: {
         currentPage: 1, // 第几页
         pageSize: 8, // 每页多少条
@@ -53,12 +60,35 @@ export default {
     },
     changePage (newPage) {
       this.page.currentPage = newPage
+      this.getAllImg() // 重新获取数据
     },
     // 点击图片是触发
     //   需要将url参数传递给上层组件
     // 在脚手架中 自定义事件名 可以大小写通用 不用纯小写了
     clickImg (url) {
       this.$emit('selectOneImg', url)
+    },
+    // 上传素材
+    uploadImg (params) {
+      // 调用上传接口
+      //  params.file 就是需要上传的图片文件
+      // 接口参数类型要求是 formData
+
+      const data = new FormData() // 实例化一个formData对象
+      data.append('image', params.file) // 加入文件参数
+      // 开始发送上传请求了
+      this.$axios({
+        url: '/user/images', // 请求地址
+        method: 'post', // 上传或者新增一般都是post类型
+        data // es6简写
+      }).then(result => {
+        // 如果成功了  此时 我们的接口会返回给我们一个上传成功之后的图片地址
+        // 拿到了返回的url地址 应该做什么
+        // 根刚才一样 往外传
+        this.$emit('selectOneImg', result.data.url) // 将url参数传出去
+      }).catch(() => {
+        this.$message.error('上传素材失败')
+      })
     }
   },
   created () {
@@ -81,5 +111,15 @@ export default {
             height: 100%;
         }
     }
+}
+.upload-img {
+  display: flex;
+  justify-content: center;
+  i {
+    font-size: 20px;
+    padding: 50px;
+    border:2px dashed #ccc;
+    border-radius: 4px;
+  }
 }
 </style>
