@@ -11,12 +11,12 @@
     <el-col class='right' :span="12">
         <!-- 再次放置一个row组件-->
         <el-row type='flex' justify="end" align="middle">
-          <img src="../../assets/img/0e0a60f3ceb503c4d5d621ac029735ca.jpg" alt="">
-           <!-- <img :src="userInfo.photo" alt=""> -->
+          <!-- <img src="../../assets/img/0e0a60f3ceb503c4d5d621ac029735ca.jpg" alt=""> -->
+           <img :src="userInfo.photo" alt="">
            <!-- 下拉菜单 点击下拉菜单会触发 command事件-->
            <el-dropdown trigger='click' @command="clickMenu">
                <!-- 显示的内容 -->
-               <span>大魔王</span>
+               <!-- <span>大魔王</span> -->
                 <span>{{ userInfo.name }}</span>
                 <!-- 下拉内容需要做具名插槽dropdown  el-dropdown-menu是专门做下拉的组件 -->
                 <el-dropdown-menu slot="dropdown" >
