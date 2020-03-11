@@ -4,7 +4,9 @@
 <!-- 两列 -->
  <el-col class='left' :span="12">
     <!-- 图标 -->
-     <i class='el-icon-s-fold'></i>
+      <!-- class为动态的图标了 -->
+       <!-- :class="{ class名称: 布尔值,class名称: 布尔值  }" -->
+     <i @click="collapse=!collapse" :class="{'el-icon-s-fold' : !collapse, 'el-icon-s-unfold' : collapse}"></i>
     <span> 江苏传智播客教育科技股份有限公司 </span>
 </el-col>
 <!-- 右侧列 -->
@@ -37,7 +39,15 @@ import eventBus from '@/utils/eventBus'
 export default {
   data () {
     return {
-      userInfo: {} // 用户个人信息
+      userInfo: {}, // 用户个人信息
+      collapse: false// 开始不是折叠的
+    }
+  },
+  // 监听data中数据变化
+  watch: {
+    collapse () {
+    //  说明折叠状态变了
+      eventBus.$emit('changeCollapse')// 触发一个改变折叠状态的事件
     }
   },
   methods: {
