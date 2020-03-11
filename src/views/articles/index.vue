@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { getArticles } from '@/api/articles'
 import { getChannels } from '@/api/channels'
 export default {
   data () {
@@ -198,15 +199,12 @@ export default {
       this.channels = result.data.channels
     },
     // 获取文章列表
-    getArticles (params) {
-      this.$axios({
-        url: '/articles',
-        params
-      }).then(result => {
-        this.list = result.data.results // 获取文章列表
-        // 将总数赋值给total
-        this.page.total = result.data.total_count// 总数
-      })
+    async getArticles (params) {
+      // this.getArticles()
+      const result = await getArticles(params)
+      this.list = result.data.results // 获取文章列表
+      // 将总数赋值给total
+      this.page.total = result.data.total_count// 总数
     }
   },
   created () {
