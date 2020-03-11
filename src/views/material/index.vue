@@ -103,53 +103,54 @@ export default {
       this.dialogvisible = true// 打开索引
     },
     // 删除素材的方法
-    delMaterial (row) {
+    async delMaterial (row) {
       // 删除之前询问一下
       // confirm也是promise
-      this.$confirm('确定要删除当前图片吗', '提示').then(() => {
-        this.$axios({
+      await this.$confirm('确定要删除当前图片吗', '提示')
+      try {
+        await this.$axios({
           method: 'delete', // 请求类型
           url: `/user/images/${row.id}` // 请求地址
-        }).then(() => {
-        // 成功了之后
-          this.getMaterial()// 重新加载数据
-        }).catch(() => {
-          this.$message.error('删除失败')
         })
-      })
-    },
-    // 取消或者收藏素材
-    collectOrCancel (row) {
-      //  调用收藏或取消接口
-      this.$axios({
-        method: 'put', // 请求类型
-        url: `/user/images/${row.id}`, // 请求地址
-        data: {
-          collect: !row.is_collected // true  or false  ?  取反 因为 收藏 => 取消收藏 没收藏  => 收藏
-        }// 放置body参数
-      }).then(() => {
         // 成功了之后
         this.getMaterial()// 重新加载数据
-      }).catch(() => {
+      } catch (error) {
+        this.$message.error('删除失败')
+      }
+    },
+    // 取消或者收藏素材
+    async collectOrCancel (row) {
+      try {
+        //  调用收藏或取消接口
+        await this.$axios({
+          method: 'put', // 请求类型
+          url: `/user/images/${row.id}`, // 请求地址
+          data: {
+            collect: !row.is_collected // true  or false  ?  取反 因为 收藏 => 取消收藏 没收藏  => 收藏
+          }// 放置body参数
+        })
+        this.getMaterial()// 重新加载数据
+      } catch (error) {
         this.$message.error('收藏失败')
-      })
+      }
     },
     // 定义一个上传组件的方法
-    uploadImg (params) {
-      // params.file就是需要上传的图片文件
+    async uploadImg (params) {
+      try {
+        // params.file就是需要上传的图片文件
       // 接口测试类型要求是formData
-      const data = new FormData()// 实例化一个formData对象
-      data.append('image', params.file)// 加入文件
-      this.$axios({
-        url: '/user/images', // 请求地址
-        method: 'post',
-        data
-      }).then(() => {
+        const data = new FormData()// 实例化一个formData对象
+        data.append('image', params.file)// 加入文件
+        await this.$axios({
+          url: '/user/images', // 请求地址
+          method: 'post',
+          data
+        })
         // 如果成功了 应该重新获取数据
         this.getMaterial()
-      }).catch(() => {
+      } catch (error) {
         this.$message.error('上传失败')
-      })
+      }
     },
     // 该方法汇总页码切换时执行
     changePage (newPage) {
@@ -157,8 +158,8 @@ export default {
       this.getMaterial()// 读取数据
     },
     //   获取素材数据
-    getMaterial () {
-      this.$axios({
+    async getMaterial () {
+      const result = await this.$axios({
         url: '/user/images', // 请求地址
         params: {
           collect: this.activeName === 'collect', //  这个位置应该变活 根据当前的页签变活   activeName === 'all' 获取所有的素材  activeName = 'collect' 获取收藏素材
@@ -166,12 +167,11 @@ export default {
           per_page: this.page.pageSize // 获取每页数量
         }, // get参数 也就是query参数
         data: {} // data参数 放的是body参数
-      }).then(result => {
-        // 将返回的数据 赋值到data中的数据
-        this.list = result.data.results
-        // 将总条数赋值给total
-        this.page.total = result.data.total_count// 总数 全部素材的总数 收藏素材的总数
       })
+      // 将返回的数据 赋值到data中的数据
+      this.list = result.data.results
+      // 将总条数赋值给total
+      this.page.total = result.data.total_count// 总数 全部素材的总数 收藏素材的总数
     },
     // 切换页签事件
     changeTab () {
